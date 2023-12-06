@@ -1,47 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:linked_scroll_controller/linked_scroll_controller.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
-import 'table_head.dart';
-import 'table_body.dart';
+import 'constants.dart';
 
-class MultiplicationTable extends StatefulWidget {
-  @override
-  _MultiplicationTableState createState() => _MultiplicationTableState();
-}
+const double cellWidth = 50;
 
-class _MultiplicationTableState extends State<MultiplicationTable> {
-  LinkedScrollControllerGroup _controllers;
-  ScrollController _headController;
-  ScrollController _bodyController;
-
-  @override
-  void initState() {
-    super.initState();
-    _controllers = LinkedScrollControllerGroup();
-    _headController = _controllers.addAndGet();
-    _bodyController = _controllers.addAndGet();
-  }
-
-  @override
-  void dispose() {
-    _headController.dispose();
-    _bodyController.dispose();
-    super.dispose();
-  }
+class MultiplicationTable extends StatelessWidget {
+  const MultiplicationTable({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TableHead(
-          scrollController: _headController,
-        ),
-        Expanded(
-          child: TableBody(
-            scrollController: _bodyController,
+    return TableView.builder(
+      pinnedColumnCount: 1,
+      pinnedRowCount: 1,
+      columnCount: maxNumber,
+      rowCount: maxNumber,
+      columnBuilder: (int column) {
+        return TableSpan(
+          extent: FixedTableSpanExtent(cellWidth),
+          backgroundDecoration: TableSpanDecoration(
+            color: column == 0 ? Colors.yellow.withOpacity(0.3) : null,
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.black12,
+              ),
+            ),
           ),
-        ),
-      ],
+        );
+      },
+      rowBuilder: (int row) {
+        return TableSpan(
+          extent: FixedTableSpanExtent(cellWidth),
+          backgroundDecoration: TableSpanDecoration(
+            color: row == 0 ? Colors.yellow.withOpacity(0.3) : null,
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.black12,
+              ),
+            ),
+          ),
+        );
+      },
+      cellBuilder: (BuildContext context, TableVicinity vicinity) {
+        final product = (vicinity.row + 1) * (vicinity.column + 1);
+        return Center(
+          child: Text(product.toString()),
+        );
+      },
     );
   }
 }
